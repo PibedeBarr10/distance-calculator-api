@@ -4,39 +4,18 @@ namespace App\Service;
 
 class GetDistanceBetweenPointsService
 {
-	public function __construct(
-		private string $requestMethod,
-		private float $firstLatitude,
-		private float $firstLongitude,
-		private float $secondLatitude,
-		private float $secondLongitude
-	) {}
-
-    public function processRequest(): void
-    {
-        switch ($this->requestMethod) {
-            case 'GET':
-                $response = $this->getDistance();
-                break;
-            default:
-                $response = $this->notFoundResponse();
-                break;
-        }
-
-        header($response['status_code_header']);
-        header('Content-type: application/json');
-        if ($response['body']) {
-            echo $response['body'];
-        }
-    }
-	
-	private function getDistance(): array
+	public function getDistance(
+        float $firstLatitude,
+        float $firstLongitude,
+        float $secondLatitude,
+        float $secondLongitude
+    ): array
 	{
 		$r = 6371.071;
-		$rlat1 = $this->degreesToRadians($this->firstLatitude);
-		$rlat2 = $this->degreesToRadians($this->secondLatitude);
+		$rlat1 = $this->degreesToRadians($firstLatitude);
+		$rlat2 = $this->degreesToRadians($secondLatitude);
 		$difflat = $rlat2 - $rlat1;
-		$difflon = $this->degreesToRadians($this->secondLongitude - $this->firstLongitude);
+		$difflon = $this->degreesToRadians($secondLongitude - $firstLongitude);
 		
 		$distance = 2 * $r * asin(
 			sqrt(
@@ -54,12 +33,5 @@ class GetDistanceBetweenPointsService
 	private function degreesToRadians(float $degrees): float
 	{
 		return ($degrees * pi()) / 180;
-	}
-	
-	private function notFoundResponse(): array
-	{
-		$response['status_code_header'] = 'HTTP/1.1 404 Not Found';
-		$response['body'] = null;
-		return $response;
 	}
 }

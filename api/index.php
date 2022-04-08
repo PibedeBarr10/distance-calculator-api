@@ -1,6 +1,7 @@
 <?php
 require '../vendor/autoload.php';
 
+use App\Controller\GetDistanceBetweenPointsController;
 use App\Service\GetDistanceBetweenPointsService;
 
 header("Access-Control-Allow-Origin: *");
@@ -34,12 +35,14 @@ if($firstLatitude === null ||
 }
 
 $requestMethod = $_SERVER["REQUEST_METHOD"];
-$controller = new GetDistanceBetweenPointsService(
-	$requestMethod,
-	$firstLatitude,
-	$firstLongitude,
-	$secondLatitude,
-	$secondLongitude
+$controller = new GetDistanceBetweenPointsController(
+    new GetDistanceBetweenPointsService()
 );
 
-$controller->processRequest();
+$controller->processRequest(
+    $requestMethod,
+    $firstLatitude,
+    $firstLongitude,
+    $secondLatitude,
+    $secondLongitude
+);
